@@ -1,0 +1,2 @@
+# NLP_chatbot
+This repository contains a Machine learning project developed in R to automate the IT help-desk issue resolving process by applying NLP based algorithm to identify past issues closely related to the current issue and provide immediate solution to the user. In case this happens to be a new issue , L1 ticket is raised which will be resolved by L1 agent and the model retrains itself to accommodate these issues in future. 
