@@ -17,6 +17,11 @@ analyse <- function(query){
     # Provide the answers
     if(query == "1"){
       chat_db = rbind(chat_db,data.frame(user = "Innominds Bot",text = val1[response_no],time = Sys.time()))
+      #reward the solution
+      temp_learning[,response_no + 1] = 1
+      assign('temp_learning',temp_learning,envir=.GlobalEnv)
+      learning = rbind(learning,temp_learning)
+      assign('learning',learning,envir=.GlobalEnv)
     }
     else{
       response_no <<- response_no +1
