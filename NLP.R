@@ -1,6 +1,7 @@
 # Natural Language Processing
 # Importing the dataset
 
+
 dataset_original = read.csv('FAQ.csv', stringsAsFactors = FALSE)
 db = read.csv('QuestionBank.csv', stringsAsFactors = FALSE)
 learning = setNames(data.frame(matrix(ncol = 6, nrow = 0)), c("Entity", "Sol1", "Sol2","Sol3","Sol4","Sol5"))
@@ -8,6 +9,8 @@ temp_learning = setNames(data.frame(matrix(ncol = 6, nrow = 0)), c("Entity", "So
 learningRank = setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Solutions", "Rank", "Entity"))
 training_set = dataset_original
 v_training_set = training_set
+intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
+IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
 #learningRank must be reset during re-inforcement training
 
 new_issues =subset(db, FALSE)
@@ -37,6 +40,8 @@ create_model <- function(x){
     print("First Training")
     dataset_original = read.csv('FAQ.csv', stringsAsFactors = FALSE)
     assign('dataset_original',dataset_original,envir=.GlobalEnv)
+    IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
+    intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE) 
   }
   corpus = VCorpus(VectorSource(dataset_original$Questions))
   corpus = tm_map(corpus, content_transformer(tolower))
@@ -45,7 +50,7 @@ create_model <- function(x){
   corpus = tm_map(corpus, removeWords, stopwords())
   corpus = tm_map(corpus, stemDocument)
   corpus = tm_map(corpus, stripWhitespace)
-  
+  print("running")
   # Creating the Bag of Words model
   
   dtm = DocumentTermMatrix(corpus)
@@ -62,7 +67,8 @@ create_model <- function(x){
   # verb keyword is intent
   
   
-  IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
+  #IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
+  assign('IT_keys',IT_keys,envir=.GlobalEnv)
   keys = IT_keys
   corpus = VCorpus(VectorSource(keys$Keywords))
   corpus = tm_map(corpus, content_transformer(tolower))
@@ -96,7 +102,8 @@ create_model <- function(x){
   # multiclass label complete
   
   v_training_set = dataset
-  intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
+  # intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
+  assign('intent',intent,envir=.GlobalEnv)
   v_keys = intent
   corpus = VCorpus(VectorSource(v_keys$Keywords))
   corpus = tm_map(corpus, content_transformer(tolower))
@@ -133,95 +140,95 @@ create_model <- function(x){
   
 } 
 
-corpus = VCorpus(VectorSource(dataset_original$Questions))
-corpus = tm_map(corpus, content_transformer(tolower))
-corpus = tm_map(corpus, removeNumbers)
-corpus = tm_map(corpus, removePunctuation)
-corpus = tm_map(corpus, removeWords, stopwords())
-corpus = tm_map(corpus, stemDocument)
-corpus = tm_map(corpus, stripWhitespace)
-
-# Creating the Bag of Words model
-
-dtm = DocumentTermMatrix(corpus)
-dtm = removeSparseTerms(dtm, 0.999)
-dataset = as.data.frame(as.matrix(dtm))
-#dataset = dataset[,-which(colnames(dataset)== "comput")]
-training_set = dataset
-
-##################################################################################################################################
-##################################################################################################################################
-
-# we will use the IT keyword first to get the broad category and then will use the verb keyword to get the closest match question
-# IT keyword is entity
-# verb keyword is intent
-
-
-IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
-keys = IT_keys
-corpus = VCorpus(VectorSource(keys$Keywords))
-corpus = tm_map(corpus, content_transformer(tolower))
-corpus = tm_map(corpus, removeNumbers)
-corpus = tm_map(corpus, removePunctuation)
-corpus = tm_map(corpus, removeWords, stopwords())
-corpus = tm_map(corpus, stemDocument)
-corpus = tm_map(corpus, stripWhitespace)
-
-# Creating the Bag of Words model
-
-dtm = DocumentTermMatrix(corpus)
-dtm = removeSparseTerms(dtm, 0.999)
-keys = as.data.frame(as.matrix(dtm))
-
-#creating an empty numeric vector to hold the matching col number
-a <- numeric()
-
-for(i in 1:ncol(keys)){
-  col_number = which(colnames(training_set) == colnames(keys)[i])
-  #print(col_number)
-  if(!(identical(col_number, integer(0)))){
-    a = append(a,col_number)
-    #print(col_number)
-  }
-}
-
-# now we can multiclass label the db questions
-training_set = training_set[,a]
-# multiclass label complete
-
-v_training_set = dataset
-intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
-v_keys = intent
-corpus = VCorpus(VectorSource(v_keys$Keywords))
-corpus = tm_map(corpus, content_transformer(tolower))
-corpus = tm_map(corpus, removeNumbers)
-corpus = tm_map(corpus, removePunctuation)
-corpus = tm_map(corpus, removeWords, stopwords())
-corpus = tm_map(corpus, stemDocument)
-corpus = tm_map(corpus, stripWhitespace)
-
-# Creating the Bag of Words model
-
-dtm = DocumentTermMatrix(corpus)
-dtm = removeSparseTerms(dtm, 0.999)
-v_keys = as.data.frame(as.matrix(dtm))
-
-#creating an empty numeric vector to hold the matching col number
-a <- numeric()
-for(i in 1:ncol(v_keys)){
-  col_number = which(colnames(v_training_set) == colnames(v_keys)[i])
-  #print(col_number)
-  if(!(identical(col_number, integer(0)))){
-    a = append(a,col_number)
-    #print(col_number)
-  }
-}
-
-# now we can multiclass label the db questions
-
-v_training_set = v_training_set[,a]
-# multiclass intent label complete
-
+# corpus = VCorpus(VectorSource(dataset_original$Questions))
+# corpus = tm_map(corpus, content_transformer(tolower))
+# corpus = tm_map(corpus, removeNumbers)
+# corpus = tm_map(corpus, removePunctuation)
+# corpus = tm_map(corpus, removeWords, stopwords())
+# corpus = tm_map(corpus, stemDocument)
+# corpus = tm_map(corpus, stripWhitespace)
+# 
+# # Creating the Bag of Words model
+# 
+# dtm = DocumentTermMatrix(corpus)
+# dtm = removeSparseTerms(dtm, 0.999)
+# dataset = as.data.frame(as.matrix(dtm))
+# #dataset = dataset[,-which(colnames(dataset)== "comput")]
+# training_set = dataset
+# 
+# ##################################################################################################################################
+# ##################################################################################################################################
+# 
+# # we will use the IT keyword first to get the broad category and then will use the verb keyword to get the closest match question
+# # IT keyword is entity
+# # verb keyword is intent
+# 
+# 
+# IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
+# keys = IT_keys
+# corpus = VCorpus(VectorSource(keys$Keywords))
+# corpus = tm_map(corpus, content_transformer(tolower))
+# corpus = tm_map(corpus, removeNumbers)
+# corpus = tm_map(corpus, removePunctuation)
+# corpus = tm_map(corpus, removeWords, stopwords())
+# corpus = tm_map(corpus, stemDocument)
+# corpus = tm_map(corpus, stripWhitespace)
+# 
+# # Creating the Bag of Words model
+# 
+# dtm = DocumentTermMatrix(corpus)
+# dtm = removeSparseTerms(dtm, 0.999)
+# keys = as.data.frame(as.matrix(dtm))
+# 
+# #creating an empty numeric vector to hold the matching col number
+# a <- numeric()
+# 
+# for(i in 1:ncol(keys)){
+#   col_number = which(colnames(training_set) == colnames(keys)[i])
+#   #print(col_number)
+#   if(!(identical(col_number, integer(0)))){
+#     a = append(a,col_number)
+#     #print(col_number)
+#   }
+# }
+# 
+# # now we can multiclass label the db questions
+# training_set = training_set[,a]
+# # multiclass label complete
+# 
+# v_training_set = dataset
+# intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
+# v_keys = intent
+# corpus = VCorpus(VectorSource(v_keys$Keywords))
+# corpus = tm_map(corpus, content_transformer(tolower))
+# corpus = tm_map(corpus, removeNumbers)
+# corpus = tm_map(corpus, removePunctuation)
+# corpus = tm_map(corpus, removeWords, stopwords())
+# corpus = tm_map(corpus, stemDocument)
+# corpus = tm_map(corpus, stripWhitespace)
+# 
+# # Creating the Bag of Words model
+# 
+# dtm = DocumentTermMatrix(corpus)
+# dtm = removeSparseTerms(dtm, 0.999)
+# v_keys = as.data.frame(as.matrix(dtm))
+# 
+# #creating an empty numeric vector to hold the matching col number
+# a <- numeric()
+# for(i in 1:ncol(v_keys)){
+#   col_number = which(colnames(v_training_set) == colnames(v_keys)[i])
+#   #print(col_number)
+#   if(!(identical(col_number, integer(0)))){
+#     a = append(a,col_number)
+#     #print(col_number)
+#   }
+# }
+# 
+# # now we can multiclass label the db questions
+# 
+# v_training_set = v_training_set[,a]
+# # multiclass intent label complete
+# 
 
 
 
@@ -247,6 +254,9 @@ ai = function(query){
   
   
   a = which (colnames(training_set) %in% intersect(colnames(training_set),colnames(quest_set)))
+  print("print check")
+  print(a)
+  # we have the entity ids here 
   # put these entities to learning dataframe for interactive learning
   
   
@@ -267,9 +277,13 @@ ai = function(query){
     #add_to_unresolved(query)
     return(data.frame(Questions = "0", Answers = "0",stringsAsFactors = FALSE))
   }
-  a = which (colnames(v_training_set) == intersect(colnames(v_training_set),colnames(quest_set)))
+  a = which (colnames(v_training_set) %in% intersect(colnames(v_training_set),colnames(quest_set)))
+  intent_set = character()
   if(length(a) != 0){
     intent_set = data.frame(v_training_set[,a])
+  }
+  else{
+    intent_set = data.frame(intent_set)
   }
   c = numeric()
   d = numeric()
@@ -291,11 +305,14 @@ ai = function(query){
   colnames(c) = "rows"
   d = as.data.frame(d)
   colnames(d) = "intent_rows"
+  test <<- c
+  test1 <<- d
   c = c%>%group_by(rows)%>%summarize(cnt = length(rows))
   d = d%>%group_by(intent_rows)%>%summarize(cnt = length(intent_rows))
   c = c%>%left_join(d, by = c("rows" = "intent_rows"))
-  c = apply(c, 2, function(x){replace(x, is.na(x), 0)})
+  #c = apply(c, 2, function(x){replace(x, is.na(x), 0)})
   c = data.frame(c)
+  c[is.na(c$cnt.y),"cnt.y"] = 0
   c <- c%>%arrange(desc(cnt.x,cnt.y))
   recommend = unique(c$rows)
   print(db[recommend,1])
@@ -361,47 +378,47 @@ tagPOS <-  function(x, ...) {
   return(list("entity" = possible_entity,"intent" = possible_intent))
 }
 
-for(i in 1:nrow(new_issues)){
-  entity <- tagPOS(new_issues[i,1])
-}
-
-str(entity)
-entity$entity
-entity$intent
-
-# We have got the entity and intent
-# Show the entity to L1 agent
-# If he approves, add it to the training 
-write_flag = FALSE
-good = 1
-if(good == 1){
-  for(i in 1:length(entity$entity)){
-    IT_keys = rbind(IT_keys,entity$entity[i])
-    write_flag = TRUE
-    #Check if the verb or one of its synonym is already present or not in the intent
-    #intent = rbind(intent,entity$intent[i])
-  }
-}
-
-# New entities added. On next training this keyword will help to answer the question
-# Now add the question and the answer to the dB
-
-
-db = rbind(db,c("Questions" = query,"Answers" = "new Answer"))
-
-# This will form an array of possible IT keywords
-# We will re check the Keywords for their authenticity of IT keyword from web
-# we will add these words to our earlier keys and will re train the new questions
-# We will add these as training set
-#####################################################################################################
-#####################################################################################################
-
-# For persistence , I will save it to local disk
-of(write_flag == TRUE){
-  write.csv(IT_keys,"Keyword.csv")
-  write.csv(db,"FAQ.csv")
-}
-
+# for(i in 1:nrow(new_issues)){
+#   entity <- tagPOS(new_issues[i,1])
+# }
+# 
+# str(entity)
+# entity$entity
+# entity$intent
+# # 
+# # We have got the entity and intent
+# # Show the entity to L1 agent
+# # If he approves, add it to the training 
+# write_flag = FALSE
+# good = 1
+# if(good == 1){
+#   for(i in 1:length(entity$entity)){
+#     IT_keys = rbind(IT_keys,entity$entity[i])
+#     write_flag = TRUE
+#     #Check if the verb or one of its synonym is already present or not in the intent
+#     #intent = rbind(intent,entity$intent[i])
+#   }
+# }
+# 
+# # New entities added. On next training this keyword will help to answer the question
+# # Now add the question and the answer to the dB
+# 
+# 
+# db = rbind(db,c("Questions" = query,"Answers" = "new Answer"))
+# 
+# # This will form an array of possible IT keywords
+# # We will re check the Keywords for their authenticity of IT keyword from web
+# # we will add these words to our earlier keys and will re train the new questions
+# # We will add these as training set
+# #####################################################################################################
+# #####################################################################################################
+# 
+# # For persistence , I will save it to local disk
+# of(write_flag == TRUE){
+#   write.csv(IT_keys,"Keyword.csv")
+#   write.csv(db,"FAQ.csv")
+# }
+# 
 
 
 #####################################################################################################
@@ -414,8 +431,10 @@ of(write_flag == TRUE){
 
 # Implementing UCN
 reinforcement_training <- function(){
+  learningRank = learningRank[-0]
   values = unique(learning$Entity)
   for(entities in 1:length(unique(learning$Entity))){
+    Rank_sol = Rank_sol[-0]
     UCB_dataset = learning%>%filter(Entity == values[entities])
     N = nrow(UCB_dataset)
     #N = length(which(learning$Entity == values[entities]))
@@ -446,12 +465,13 @@ reinforcement_training <- function(){
       sums_of_rewards[sol] = sums_of_rewards[sol] + reward
       total_reward = total_reward + reward
     }
-    Rank_sol <- group_by(data.frame(Solutions = sol_selected))%>%summarize(Rank = length(Solutions))
+    Rank_sol <- (data.frame(Solutions = sol_selected))%>%group_by(Solutions)%>%summarize(Rank = length(Solutions))
     Rank_sol <- Rank_sol%>%arrange(desc(Rank))
-    Rank_sol$Entity <- rep(values[entities],N)
+    Rank_sol$Entity <- rep(values[entities],nrow(Rank_sol))
     learningRank = rbind(learningRank,Rank_sol)
     assign("learningRank",learningRank,.GlobalEnv)
   }
   
   
 }
+

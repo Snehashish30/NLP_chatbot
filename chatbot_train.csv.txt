@@ -1,0 +1,52 @@
+Questions	Answers
+Name Correction in mail id	Change has been done.
+Request to configure the system to share it among users	They won't be able to access other profiles if they login with their account. Please ask users to reach out to IT if they have any issues.
+Unable to connect to internet using wifi network inn009	"inn009 is removed, connect to inn001. Connect IT helpdesk if any more issues."
+Needs permission wifi access to laptop	"First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig /all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access"
+Need Wifi Access Approval	"Not approved by manager, hence closing this ticket."
+Need abc FTP Server Details	IT team has sent the FTP credentials to your email separately. Marking the ticket as closed.
+LAN not working in a VM	changed network settings to Bridged and configured network in VM.
+Need Wave rock VPN	IT team has provided VPN access.Please follow the instructions on https://ticket.abc.com/kb/faq.php and click on Network Issues and solution and then select SSLVPN configuration for your machines
+Jira project creation and user permission	IT Team created New Project in Jira and shared details with you in separate mail.Please pass the details to the concerned users individually know if there are any issues/requirements URL:https://jira.abc.com Project Name: P3DataSystemsKey
+Public IP Address for Coffee House project 	IT Team has Assigned public IP to the host. IP Address is: 115.111.91.10
+Wifi access needed.	"First, connect a network cable to your laptop to the red port on your workstation. Run ipconfig /all on your command prompt. Share WiFi Mac or Hardware address to the IT team. IT team then adds your MAC ID to enable WiFi access"
+server#11 got hanged and needed a restart	IT Team has restarted the server and its accessible now.
+Linux VM for Azuba project	IT Team has created VM as per your requirement and configured accordingly and sent the login details in a separate mail.
+"Login credetials are not working, says username or password wrong."	Password got expired. New password is sent to your email id
+Install Microsoft outlook	Installed micrsoft outlook on your machine and closing the ticket
+My Space QA application is down	We regret for the inconvinience caused. The issue is with Host server which got rebooted due to a power failure.
+Configure outlook in my system	IT Team has sent the instructions to configure outlook -follow the instructions on https://ticket.abc.com/kb/faq.php and click on O365 and solution and then outlook configuration for your machines
+Mailbox is full 	IT Team has sent the instructions to cleanup the maibox and archieve mails https://ticket.abc.com/kb/faq.php and click on O365 issues and then Mail box full.
+Login Page is not getting displayed	Login server was down. It is up now. Please check.
+Prvide me the admini privileges to install mysql database	Granted admin privileges to install It will get revoked in 24hrs.
+Prvide me the admini privileges to install mysql database	Granted admin privileges to install It will get revoked in 24hrs.
+Install postgres database on my machine	"Go to \imfs\software\postgres location, copy postgresql database into local and install"
+System showing blue screen on startup	"1. Hold the power button until system gets shut down, then hit the power button to boot the machine. If still blue screen appears contact IT team and surrender the laptop."
+"Unable to install outlook, it is asking for admin access needed"	Granted admin privileges to install It will get revoked in 24hrs.
+Desktop not working	"Please check the Power cables are properly plugged , Please write back to us if the Problem still persists."
+"System behaving strangely, blue screen is appearing in middle"	"Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team"
+My Internet is not working	"Go to network tab from bottom right corner, choose inn001 network, click on connect"
+"Account got locked, because of 3 wrong attempts os password. Could you please reset the password"	Unlocked the account and new password is sent to your email id.
+System hangs with blue screen on startup	"Press F8 button on system start, Choose safe mode, if OS loads then restart the os, if still same issue comes handover it to IT team"
+Unable to connect to internet using wifi network inn009	"inn009 is removed, connect to inn001"
+Unable to connect to Internet	"Go to network tab from bottom right corner, choose inn001 network, click on connect"
+Facing network/internet issue with wifi xwq090	"Go to network tab from bottom right corner, choose inn001 network, click on connect"
+Replace the battery for my Macbook laptop	Please run Battery Helath test and send us the results IT team will do the needful accordingly. Please follow the steps to cehck the battery Helath https://ticket.abc.com/kb/faq.php Hardware issue-Battery issue
+Computer is not getting switched on	Contact IT support.
+Creation of mail id for new Joinee 	IT Team has Created the mail Id and sent the details in separate email.
+"Forgot the password, can you please reset the password for me."	"Go to URL : password.reset.com, Enter you login id, enter password received, reset the password"
+MySpace Password Expiry	"Please reset the passowrd using self service Portal http://ssp.abc.com, Please write back to us if you face any issue."
+Login Page Down	Login server was down. It is up now. Please check.
+install MS office	Please login to web mail and go to settings -office 365 -install applications- download and install MS office for your machine.
+Login Page not opening	Login server was down. It is up now. Please check.
+Password expired.	"Go to URL : password.reset.com, Enter you login id, enter password received, reset the password"
+Account locked. Not able to login	Unlocked the account and new password is sent to your email id.
+Need Ethernet access	Please connect the LAN cable to the red port on your workstation. Please write back to IT if you are unable to get the IP addresss
+Create new account and share the username and password	"Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details"
+USB Enabling	"As you requested, we have enabled USB access on your laptop. Please check and confirm it."
+Request to create login credentials for Mr. Koti	We have already created account and details have been sent to his personal Email ID
+Request to create login credentials for Dr. Hasan	Account created and details sent to user's personal email ID
+FW: Myspace Login Issue-- Ania	"Go to URL : password.reset.com, Enter you login id, enter password received, reset the password"
+Login credetials are not working.	"Go to URL : password.reset.com, Enter you login id, enter password received, reset the password"
+New Account is needed for a new joinee.	"Go to URL : accountsetup.com, Enter personal details along with user id, enter OTP received, click finish. Check email for details."
+Re: Unable to access outlook and myspace	"We have reset the password and communicated to user in a mail already, now user is able to login. Hence marking the ticket resolved"
