@@ -18,6 +18,9 @@ new_issues$resolved_flag = character(0)
 # Cleaning the texts
 # install.packages('tm')
 # install.packages('SnowballC')
+# install.packages('openNLP')
+# install.packages('NLP')
+# install.packages('dplyr')
 library(tm)
 library(SnowballC)
 library(dplyr)
@@ -140,95 +143,9 @@ create_model <- function(x){
   
 } 
 
-# corpus = VCorpus(VectorSource(dataset_original$Questions))
-# corpus = tm_map(corpus, content_transformer(tolower))
-# corpus = tm_map(corpus, removeNumbers)
-# corpus = tm_map(corpus, removePunctuation)
-# corpus = tm_map(corpus, removeWords, stopwords())
-# corpus = tm_map(corpus, stemDocument)
-# corpus = tm_map(corpus, stripWhitespace)
+
 # 
-# # Creating the Bag of Words model
-# 
-# dtm = DocumentTermMatrix(corpus)
-# dtm = removeSparseTerms(dtm, 0.999)
-# dataset = as.data.frame(as.matrix(dtm))
-# #dataset = dataset[,-which(colnames(dataset)== "comput")]
-# training_set = dataset
-# 
-# ##################################################################################################################################
-# ##################################################################################################################################
-# 
-# # we will use the IT keyword first to get the broad category and then will use the verb keyword to get the closest match question
-# # IT keyword is entity
-# # verb keyword is intent
-# 
-# 
-# IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
-# keys = IT_keys
-# corpus = VCorpus(VectorSource(keys$Keywords))
-# corpus = tm_map(corpus, content_transformer(tolower))
-# corpus = tm_map(corpus, removeNumbers)
-# corpus = tm_map(corpus, removePunctuation)
-# corpus = tm_map(corpus, removeWords, stopwords())
-# corpus = tm_map(corpus, stemDocument)
-# corpus = tm_map(corpus, stripWhitespace)
-# 
-# # Creating the Bag of Words model
-# 
-# dtm = DocumentTermMatrix(corpus)
-# dtm = removeSparseTerms(dtm, 0.999)
-# keys = as.data.frame(as.matrix(dtm))
-# 
-# #creating an empty numeric vector to hold the matching col number
-# a <- numeric()
-# 
-# for(i in 1:ncol(keys)){
-#   col_number = which(colnames(training_set) == colnames(keys)[i])
-#   #print(col_number)
-#   if(!(identical(col_number, integer(0)))){
-#     a = append(a,col_number)
-#     #print(col_number)
-#   }
-# }
-# 
-# # now we can multiclass label the db questions
-# training_set = training_set[,a]
-# # multiclass label complete
-# 
-# v_training_set = dataset
-# intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
-# v_keys = intent
-# corpus = VCorpus(VectorSource(v_keys$Keywords))
-# corpus = tm_map(corpus, content_transformer(tolower))
-# corpus = tm_map(corpus, removeNumbers)
-# corpus = tm_map(corpus, removePunctuation)
-# corpus = tm_map(corpus, removeWords, stopwords())
-# corpus = tm_map(corpus, stemDocument)
-# corpus = tm_map(corpus, stripWhitespace)
-# 
-# # Creating the Bag of Words model
-# 
-# dtm = DocumentTermMatrix(corpus)
-# dtm = removeSparseTerms(dtm, 0.999)
-# v_keys = as.data.frame(as.matrix(dtm))
-# 
-# #creating an empty numeric vector to hold the matching col number
-# a <- numeric()
-# for(i in 1:ncol(v_keys)){
-#   col_number = which(colnames(v_training_set) == colnames(v_keys)[i])
-#   #print(col_number)
-#   if(!(identical(col_number, integer(0)))){
-#     a = append(a,col_number)
-#     #print(col_number)
-#   }
-# }
-# 
-# # now we can multiclass label the db questions
-# 
-# v_training_set = v_training_set[,a]
-# # multiclass intent label complete
-# 
+
 
 
 
@@ -378,47 +295,7 @@ tagPOS <-  function(x, ...) {
   return(list("entity" = possible_entity,"intent" = possible_intent))
 }
 
-# for(i in 1:nrow(new_issues)){
-#   entity <- tagPOS(new_issues[i,1])
-# }
-# 
-# str(entity)
-# entity$entity
-# entity$intent
-# # 
-# # We have got the entity and intent
-# # Show the entity to L1 agent
-# # If he approves, add it to the training 
-# write_flag = FALSE
-# good = 1
-# if(good == 1){
-#   for(i in 1:length(entity$entity)){
-#     IT_keys = rbind(IT_keys,entity$entity[i])
-#     write_flag = TRUE
-#     #Check if the verb or one of its synonym is already present or not in the intent
-#     #intent = rbind(intent,entity$intent[i])
-#   }
-# }
-# 
-# # New entities added. On next training this keyword will help to answer the question
-# # Now add the question and the answer to the dB
-# 
-# 
-# db = rbind(db,c("Questions" = query,"Answers" = "new Answer"))
-# 
-# # This will form an array of possible IT keywords
-# # We will re check the Keywords for their authenticity of IT keyword from web
-# # we will add these words to our earlier keys and will re train the new questions
-# # We will add these as training set
-# #####################################################################################################
-# #####################################################################################################
-# 
-# # For persistence , I will save it to local disk
-# of(write_flag == TRUE){
-#   write.csv(IT_keys,"Keyword.csv")
-#   write.csv(db,"FAQ.csv")
-# }
-# 
+
 
 
 #####################################################################################################

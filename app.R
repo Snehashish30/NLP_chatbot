@@ -1,3 +1,6 @@
+# install.packages('purrr')
+# install.packages('purrrlyr')
+
 library(shiny)
 library(dplyr)
 library(purrr)
@@ -73,15 +76,7 @@ server <- shinyServer( function(input, output, session) {
       render_msg_divs(data.frame(chat_db))
     })
   })
-  # output$chatbox <- renderUI({
-  #   if (0 == 0) {
-  #     render_msg_divs(data.frame("user" = "BOT",
-  #                                "text" = "Hello",
-  #                                "time" = Sys.time()))
-  #   } else {
-  #     tags$span("Empty chat")
-  #   }
-  # })
+  
   
 })
 
