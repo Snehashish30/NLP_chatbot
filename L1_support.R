@@ -1,6 +1,6 @@
 library(shiny)
 library(DT)
-source("NLP.R")
+#source("NLP.R")
 
 shinyApp(
   ui = fluidPage(

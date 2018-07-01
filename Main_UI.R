@@ -16,7 +16,7 @@ shinyApp(
       create_model(1)
     })
     observeEvent(input$reinforcement,{
-      create_model(0)
+      reinforcement_training()
     })
 
 
