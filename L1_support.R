@@ -14,12 +14,14 @@ shinyApp(
     # take the answer
     # call the POStag method
     # shoe the entities in checkbox
+    
     output$checkbox <- renderUI({
       # choice <-  unique(new_issues[new_issues$Questions %in% input$select1, "Answers"])
       choice <- (tagPOS(input$select1))$entity
       checkboxGroupInput("checkbox","Select entities", choices = choice, selected = choice[1])
       
     })
+    updateSelectInput(session, "select1",choices = unique(new_issues[which(new_issues$resolved_flag == "N"),"Questions"]))
     observeEvent(input$submit,{
       print(input$solution)
       new_issues[new_issues$Questions %in% input$select1, "Answers"] = input$solution

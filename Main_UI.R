@@ -1,6 +1,6 @@
 library(shiny)
 library(DT)
-source("NLP.R")
+#source("NLP.R")
 
 shinyApp(
   ui = fluidPage(
@@ -10,6 +10,7 @@ shinyApp(
   ),
   server = function(input, output) {
     observeEvent(input$train,{
+      source("NLP.R")
       create_model(0)
     })
     observeEvent(input$retrain,{

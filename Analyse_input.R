@@ -1,4 +1,38 @@
-source("NLP.R")
+#source("NLP.R")
+
+##################################################################################################
+# This part comes under manual ticket solving 
+
+# This when the issue was escalated to L1 and L1 has given a acceptable response
+# Re train on all the unresolved query
+# If found any IT keyword , go for re train
+
+possible_entity = character()
+possible_intent = character()
+tagPOS <-  function(x, ...) {
+  s <- as.String(x)
+  word_token_annotator <- Maxent_Word_Token_Annotator()
+  a2 <- Annotation(1L, "sentence", 1L, nchar(s))
+  a2 <- annotate(s, word_token_annotator, a2)
+  a3 <- annotate(s, Maxent_POS_Tag_Annotator(), a2)
+  a3w <- a3[a3$type == "word"]
+  POStags <- unlist(lapply(a3w$features, `[[`, "POS"))
+  noun_pos <- which(POStags %in% c("NN","NNS","NNP","NNPS"))
+  verb_pos <- which(POStags %in% c("VB","VBP","VBD","VBN","VBG","VBZ"))
+  possible_entity = append(possible_entity,s[a3w][noun_pos])
+  possible_intent = append(possible_intent,s[a3w][verb_pos])
+  POStagged <- paste(sprintf("%s/%s", s[a3w], POStags), collapse = " ")
+  list(POStagged = POStagged, POStags = POStags)
+  if(length(possible_entity) == 0){
+    return(0)
+  }
+  return(list("entity" = possible_entity,"intent" = possible_intent))
+}
+
+
+
+
+session_chat_count = 0
 responses = 0
 response_no = 0
 val = character()

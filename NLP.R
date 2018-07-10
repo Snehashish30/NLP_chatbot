@@ -26,6 +26,9 @@ library(SnowballC)
 library(dplyr)
 require("openNLP")
 require("NLP")
+library(hunspell)
+library(stringi)
+library(stringr)
 
 create_model <- function(x){
   if(x == 1){
@@ -41,11 +44,12 @@ create_model <- function(x){
   }
   else{
     print("First Training")
-    dataset_original = read.csv('FAQ.csv', stringsAsFactors = FALSE)
+    dataset_original = read.csv('QuestionBank.csv', stringsAsFactors = FALSE)
     assign('dataset_original',dataset_original,envir=.GlobalEnv)
     IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
     intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE) 
   }
+  dataset_original$Questions <- iconv(enc2utf8(dataset_original$Questions),sub="byte")
   corpus = VCorpus(VectorSource(dataset_original$Questions))
   corpus = tm_map(corpus, content_transformer(tolower))
   corpus = tm_map(corpus, removeNumbers)
@@ -157,6 +161,21 @@ create_model <- function(x){
 #query = read.delim('query.csv', quote = '', stringsAsFactors = FALSE)
 
 ai = function(query){
+  # do spellcheck here
+  query = toString(query)
+  num_words = sapply(strsplit(query, " "), length)
+  for(i in 1 :num_words){
+    if(hunspell_check(word(query, i)) == FALSE){
+      tmp = hunspell_suggest(word(query, i))[[1]]
+      if(length(tmp)>0){
+        tmp = tmp[[1]]
+        tmp = tmp[1]
+        query = str_replace(query,word(query, i),tmp)
+      }
+      
+    }
+    
+  }
   corpus = VCorpus(VectorSource(query))
   corpus = tm_map(corpus, content_transformer(tolower))
   corpus = tm_map(corpus, removeNumbers)
@@ -266,35 +285,35 @@ raise_ticket <- function(query){
 
 
 
-##################################################################################################
-# This part comes under manual ticket solving 
-
-# This when the issue was escalated to L1 and L1 has given a acceptable response
-# Re train on all the unresolved query
-# If found any IT keyword , go for re train
-
-possible_entity = character()
-possible_intent = character()
-tagPOS <-  function(x, ...) {
-  s <- as.String(x)
-  word_token_annotator <- Maxent_Word_Token_Annotator()
-  a2 <- Annotation(1L, "sentence", 1L, nchar(s))
-  a2 <- annotate(s, word_token_annotator, a2)
-  a3 <- annotate(s, Maxent_POS_Tag_Annotator(), a2)
-  a3w <- a3[a3$type == "word"]
-  POStags <- unlist(lapply(a3w$features, `[[`, "POS"))
-  noun_pos <- which(POStags %in% c("NN","NNS","NNP","NNPS"))
-  verb_pos <- which(POStags %in% c("VB","VBP","VBD","VBN","VBG","VBZ"))
-  possible_entity = append(possible_entity,s[a3w][noun_pos])
-  possible_intent = append(possible_intent,s[a3w][verb_pos])
-  POStagged <- paste(sprintf("%s/%s", s[a3w], POStags), collapse = " ")
-  list(POStagged = POStagged, POStags = POStags)
-  if(length(possible_entity) == 0){
-    return(0)
-  }
-  return(list("entity" = possible_entity,"intent" = possible_intent))
-}
-
+# ##################################################################################################
+# # This part comes under manual ticket solving 
+# 
+# # This when the issue was escalated to L1 and L1 has given a acceptable response
+# # Re train on all the unresolved query
+# # If found any IT keyword , go for re train
+# 
+# possible_entity = character()
+# possible_intent = character()
+# tagPOS <-  function(x, ...) {
+#   s <- as.String(x)
+#   word_token_annotator <- Maxent_Word_Token_Annotator()
+#   a2 <- Annotation(1L, "sentence", 1L, nchar(s))
+#   a2 <- annotate(s, word_token_annotator, a2)
+#   a3 <- annotate(s, Maxent_POS_Tag_Annotator(), a2)
+#   a3w <- a3[a3$type == "word"]
+#   POStags <- unlist(lapply(a3w$features, `[[`, "POS"))
+#   noun_pos <- which(POStags %in% c("NN","NNS","NNP","NNPS"))
+#   verb_pos <- which(POStags %in% c("VB","VBP","VBD","VBN","VBG","VBZ"))
+#   possible_entity = append(possible_entity,s[a3w][noun_pos])
+#   possible_intent = append(possible_intent,s[a3w][verb_pos])
+#   POStagged <- paste(sprintf("%s/%s", s[a3w], POStags), collapse = " ")
+#   list(POStagged = POStagged, POStags = POStags)
+#   if(length(possible_entity) == 0){
+#     return(0)
+#   }
+#   return(list("entity" = possible_entity,"intent" = possible_intent))
+# }
+# 
 
 
 
