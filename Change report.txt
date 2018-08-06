@@ -1,0 +1,5 @@
+The following issues are fixed and new changes implemented
+
+1. Application crash due to variable re-declaration resolved
+2. Ranking of popular answers to recommend them on top feature is implemented. With each new ticket, the ranking will change as per the chosen solution
+3. No need to run reinforcement learning separately.   

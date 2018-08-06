@@ -1,9 +1,13 @@
 # Natural Language Processing
+
 # Importing the dataset
 
 
+
+#chat_db = setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("user", "text", "time"))
 dataset_original = read.csv('FAQ.csv', stringsAsFactors = FALSE)
 db = read.csv('QuestionBank.csv', stringsAsFactors = FALSE)
+popular_sol <<- setNames(data.frame(matrix(data = 0,ncol = 50, nrow = nrow(db))), c(1:50))
 learning = setNames(data.frame(matrix(ncol = 6, nrow = 0)), c("Entity", "Sol1", "Sol2","Sol3","Sol4","Sol5"))
 temp_learning = setNames(data.frame(matrix(ncol = 6, nrow = 0)), c("Entity", "Sol1", "Sol2","Sol3","Sol4","Sol5"))
 learningRank = setNames(data.frame(matrix(ncol = 3, nrow = 0)), c("Solutions", "Rank", "Entity"))
@@ -11,11 +15,15 @@ training_set = dataset_original
 v_training_set = training_set
 intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
 IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
+
 #learningRank must be reset during re-inforcement training
+
 
 new_issues =subset(db, FALSE)
 new_issues$resolved_flag = character(0)
+
 # Cleaning the texts
+
 # install.packages('tm')
 # install.packages('SnowballC')
 # install.packages('openNLP')
@@ -29,6 +37,7 @@ require("NLP")
 library(hunspell)
 library(stringi)
 library(stringr)
+
 
 create_model <- function(x){
   if(x == 1){
@@ -47,8 +56,9 @@ create_model <- function(x){
     dataset_original = read.csv('QuestionBank.csv', stringsAsFactors = FALSE)
     assign('dataset_original',dataset_original,envir=.GlobalEnv)
     IT_keys = read.csv('Keyword.csv', stringsAsFactors = FALSE)
-    intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE) 
+    intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
   }
+  
   dataset_original$Questions <- iconv(enc2utf8(dataset_original$Questions),sub="byte")
   corpus = VCorpus(VectorSource(dataset_original$Questions))
   corpus = tm_map(corpus, content_transformer(tolower))
@@ -58,15 +68,18 @@ create_model <- function(x){
   corpus = tm_map(corpus, stemDocument)
   corpus = tm_map(corpus, stripWhitespace)
   print("running")
-  # Creating the Bag of Words model
   
+  # Creating the Bag of Words model
   dtm = DocumentTermMatrix(corpus)
   dtm = removeSparseTerms(dtm, 0.999)
   dataset = as.data.frame(as.matrix(dtm))
   #dataset = dataset[,-which(colnames(dataset)== "comput")]
   training_set = dataset
   
+  
+  
   ##################################################################################################################################
+  
   ##################################################################################################################################
   
   # we will use the IT keyword first to get the broad category and then will use the verb keyword to get the closest match question
@@ -94,6 +107,7 @@ create_model <- function(x){
   #creating an empty numeric vector to hold the matching col number
   a <- numeric()
   
+  
   for(i in 1:ncol(keys)){
     col_number = which(colnames(training_set) == colnames(keys)[i])
     #print(col_number)
@@ -107,6 +121,8 @@ create_model <- function(x){
   training_set = training_set[,a]
   assign('training_set',training_set,envir=.GlobalEnv)
   # multiclass label complete
+  
+  
   
   v_training_set = dataset
   # intent = read.csv('Verb_Keywords.csv', stringsAsFactors = FALSE)
@@ -126,6 +142,7 @@ create_model <- function(x){
   dtm = removeSparseTerms(dtm, 0.999)
   v_keys = as.data.frame(as.matrix(dtm))
   
+  
   #creating an empty numeric vector to hold the matching col number
   a <- numeric()
   for(i in 1:ncol(v_keys)){
@@ -141,22 +158,18 @@ create_model <- function(x){
   
   v_training_set = v_training_set[,a]
   assign('v_training_set',v_training_set,envir=.GlobalEnv)
-  # multiclass intent label complete
-  
-  
-  
-} 
+         # multiclass intent label complete
+         
+         
+}
 
 
-# 
-
-
-
+#
 
 
 # take the question
 # take a copy of keywords grid
-# keep the matching keywords 
+# keep the matching keywords
 
 #query = read.delim('query.csv', quote = '', stringsAsFactors = FALSE)
 
@@ -171,10 +184,8 @@ ai = function(query){
         tmp = tmp[[1]]
         tmp = tmp[1]
         query = str_replace(query,word(query, i),tmp)
-      }
-      
-    }
-    
+      }     
+    }   
   }
   corpus = VCorpus(VectorSource(query))
   corpus = tm_map(corpus, content_transformer(tolower))
@@ -190,14 +201,15 @@ ai = function(query){
   
   
   a = which (colnames(training_set) %in% intersect(colnames(training_set),colnames(quest_set)))
-  print("print check")
+  print("entity check")
   print(a)
-  # we have the entity ids here 
+  print(colnames(training_set[a]))
+  # we have the entity ids here
   # put these entities to learning dataframe for interactive learning
   
   
   # we got the keywords
-  # filter the questions db for these columns and with value 
+  # filter the questions db for these columns and with value
   
   if(length(a) > 0)
   {
@@ -221,8 +233,12 @@ ai = function(query){
   else{
     intent_set = data.frame(intent_set)
   }
+  print("intent check")
+  print(a)
+  print(colnames(v_training_set[a]))
   c = numeric()
   d = numeric()
+  #View(recommend_set)
   for(i in 1:ncol(recommend_set)){
     row_number = which(recommend_set[,i] == 1)
     if(!(identical(row_number, integer(0)))){
@@ -239,25 +255,48 @@ ai = function(query){
   
   c = as.data.frame(c)
   colnames(c) = "rows"
+  print(c$rows)
   d = as.data.frame(d)
   colnames(d) = "intent_rows"
+  print(d$intent_rows)
   test <<- c
   test1 <<- d
   c = c%>%group_by(rows)%>%summarize(cnt = length(rows))
+  print(c)
   d = d%>%group_by(intent_rows)%>%summarize(cnt = length(intent_rows))
+  print(d)
   c = c%>%left_join(d, by = c("rows" = "intent_rows"))
   #c = apply(c, 2, function(x){replace(x, is.na(x), 0)})
   c = data.frame(c)
   c[is.na(c$cnt.y),"cnt.y"] = 0
   c <- c%>%arrange(desc(cnt.x,cnt.y))
+  print("Printing joined")
+  print(c)
+  c$score <- 0
+  for(i in 1:nrow(c)){
+    c[i,4] <- sum(c[i,-1])
+  }
+  
+  c <- c%>%arrange(desc(score))
+  print("Printing total score")
+  print(c)
+  c$popular_rank <- 0
+  for(i in 1:nrow(c)){
+    c[i,5] <- popular_sol[c[i,1],c[i,4]]
+  }
+  c <- c%>%arrange(desc(popular_rank))
+  print(c)
   recommend = unique(c$rows)
-  print(db[recommend,1])
+  #print(db[recommend,1])
   #return("1")
-  return(db[recommend,])
+  #cbind(db[recommend,],c$score)
+  return(cbind(db[recommend,],c[4]))
+  #return(db[recommend,])
   
 }
 
 ##################################################################################################
+
 # Run and check for the problems that are already avaialble
 #query = "Unlock USB port"
 # query = "I can't receive any email attachments"
@@ -276,22 +315,35 @@ raise_ticket <- function(query){
 #   print("Issue Escalated")
 # }
 
+
+
 ##################################################################################################
 
 
+
+
+
 # IT keywords matching complete
+
 # Now we can try to match the verbs that goes along with some sentences
 
 
 
 
+
+
+
+
+
 # ##################################################################################################
-# # This part comes under manual ticket solving 
-# 
+
+# # This part comes under manual ticket solving
+
+#
 # # This when the issue was escalated to L1 and L1 has given a acceptable response
 # # Re train on all the unresolved query
 # # If found any IT keyword , go for re train
-# 
+#
 # possible_entity = character()
 # possible_intent = character()
 # tagPOS <-  function(x, ...) {
@@ -313,19 +365,30 @@ raise_ticket <- function(query){
 #   }
 #   return(list("entity" = possible_entity,"intent" = possible_intent))
 # }
-# 
+#
+
+
+
+
 
 
 
 #####################################################################################################
+
 #####################################################################################################
+
 # Interactive/Re inforcement Learning
 
+
+
 #####################################################################################################
+
+
 
 #learning = setNames(data.frame(matrix(ncol = 6, nrow = 0)), c("Entity", "Sol1", "Sol2","Sol3","Sol4","Sol5"))
 
 # Implementing UCN
+
 reinforcement_training <- function(){
   learningRank = learningRank[-0]
   values = unique(learning$Entity)
@@ -367,7 +430,8 @@ reinforcement_training <- function(){
     learningRank = rbind(learningRank,Rank_sol)
     assign("learningRank",learningRank,.GlobalEnv)
   }
-  
-  
 }
+
+
+
 
